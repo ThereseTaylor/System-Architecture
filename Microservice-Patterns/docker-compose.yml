@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db-service:
+    build:
+      context: ./db-service
+      dockerfile: Dockerfile.dockerfile
+    image: db-service:v2
+    container_name: db-service
+    ports:
+      - "5001:5001"
+    environment:
+      - NEO4J_URI=neo4j+s://881a37a3.databases.neo4j.io:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=rFxL2O4uCT_0oLZwuY6jfp1rl44xfhBQ8mv1Ift_-rY
+    networks:
+      - app-network
+
+  address-service:
+    build:
+      context: ./address-service
+      dockerfile: Dockerfile.dockerfile
+    image: address-service:v2
+    container_name: address-service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db-service
+    networks:
+      - app-network
+
+  degree-service:
+    build:
+      context: ./degree-service
+      dockerfile: Dockerfile.dockerfile
+    container_name: degree-service
+    ports:
+      - "5002:5002"
+    depends_on:
+      - db-service
+    networks:
+      - app-network
+
+  gateway-api:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile.dockerfile  # Ensure you have a Dockerfile in ./gateway-api
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/logs
+    depends_on:
+      - address-service
+      - degree-service
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,142 @@
+2024-10-09 09:42:24,886 INFO Root logger is set up and logging to both file and console.
+2024-10-09 09:42:24,892 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.18.0.5:8080
+2024-10-09 09:42:24,893 INFO [33mPress CTRL+C to quit[0m
+2024-10-09 09:42:37,561 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 09:42:40,654 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 09:42:40,668 INFO 172.18.0.1 - - [09/Oct/2024 09:42:40] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 09:43:25,579 INFO Received GET request on /api/transaction with args: ImmutableMultiDict([])
+2024-10-09 09:43:25,583 INFO Responding with status 404 for /api/transaction
+2024-10-09 09:43:25,584 INFO 172.18.0.1 - - [09/Oct/2024 09:43:25] "[33mGET /api/transaction HTTP/1.1[0m" 404 -
+2024-10-09 10:22:53,802 INFO Root logger is set up and logging to both file and console.
+2024-10-09 10:22:53,807 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.18.0.5:8080
+2024-10-09 10:22:53,808 INFO [33mPress CTRL+C to quit[0m
+2024-10-09 10:25:11,817 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:25:15,044 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 10:25:15,047 INFO 172.18.0.1 - - [09/Oct/2024 10:25:15] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 10:25:32,718 INFO Received GET request on /api/transactions with args: ImmutableMultiDict([])
+2024-10-09 10:25:32,727 INFO Responding with status 400 for /api/transactions
+2024-10-09 10:25:32,733 INFO 172.18.0.1 - - [09/Oct/2024 10:25:32] "[31m[1mGET /api/transactions HTTP/1.1[0m" 400 -
+2024-10-09 10:30:18,001 INFO Received GET request on /api/tdegree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:30:18,003 INFO Responding with status 404 for /api/tdegree-centrality
+2024-10-09 10:30:18,005 INFO 172.18.0.1 - - [09/Oct/2024 10:30:18] "[33mGET /api/tdegree-centrality HTTP/1.1[0m" 404 -
+2024-10-09 10:30:36,031 INFO Received GET request on /api/tdegree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:30:36,033 INFO Responding with status 404 for /api/tdegree-centrality
+2024-10-09 10:30:36,035 INFO 172.18.0.1 - - [09/Oct/2024 10:30:36] "[33mGET /api/tdegree-centrality HTTP/1.1[0m" 404 -
+2024-10-09 10:30:39,931 INFO Received GET request on /api/tdegree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:30:39,933 INFO Responding with status 404 for /api/tdegree-centrality
+2024-10-09 10:30:39,935 INFO 172.18.0.1 - - [09/Oct/2024 10:30:39] "[33mGET /api/tdegree-centrality HTTP/1.1[0m" 404 -
+2024-10-09 10:30:42,137 INFO Received GET request on /api/tdegree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:30:42,140 INFO Responding with status 404 for /api/tdegree-centrality
+2024-10-09 10:30:42,141 INFO 172.18.0.1 - - [09/Oct/2024 10:30:42] "[33mGET /api/tdegree-centrality HTTP/1.1[0m" 404 -
+2024-10-09 10:30:52,924 INFO Received GET request on /api/tdegree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:30:52,926 INFO Responding with status 404 for /api/tdegree-centrality
+2024-10-09 10:30:52,927 INFO 172.18.0.1 - - [09/Oct/2024 10:30:52] "[33mGET /api/tdegree-centrality HTTP/1.1[0m" 404 -
+2024-10-09 10:30:57,039 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:31:04,451 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:31:08,007 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:31:10,288 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f1b050a78b0 state=finished raised ConnectionError>]
+2024-10-09 10:31:10,289 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 10:31:10,290 INFO 172.18.0.1 - - [09/Oct/2024 10:31:10] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 10:31:12,062 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:31:17,699 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f1b050be280 state=finished raised ConnectionError>]
+2024-10-09 10:31:17,703 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 10:31:17,704 INFO 172.18.0.1 - - [09/Oct/2024 10:31:17] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 10:31:21,244 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f1b051050a0 state=finished raised ConnectionError>]
+2024-10-09 10:31:21,245 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 10:31:21,247 INFO 172.18.0.1 - - [09/Oct/2024 10:31:21] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 10:31:25,302 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f1b0509e520 state=finished raised ConnectionError>]
+2024-10-09 10:31:25,307 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 10:31:25,309 INFO 172.18.0.1 - - [09/Oct/2024 10:31:25] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 10:42:59,030 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 10:42:59,887 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 10:42:59,903 INFO 172.18.0.1 - - [09/Oct/2024 10:42:59] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 11:46:48,366 INFO Root logger is set up and logging to both file and console.
+2024-10-09 11:46:48,371 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.18.0.5:8080
+2024-10-09 11:46:48,372 INFO [33mPress CTRL+C to quit[0m
+2024-10-09 11:47:30,373 INFO Received GET request on /api/transactions with args: ImmutableMultiDict([('address', '[bc1parzwe2xrh0wxx88qlr3lx3fve9udrrvrxrt86jcmy899q7jhgsxqjnd7f8]')])
+2024-10-09 11:47:32,651 INFO Responding with status 200 for /api/transactions
+2024-10-09 11:47:32,653 INFO 172.18.0.1 - - [09/Oct/2024 11:47:32] "GET /api/transactions?address=[bc1parzwe2xrh0wxx88qlr3lx3fve9udrrvrxrt86jcmy899q7jhgsxqjnd7f8] HTTP/1.1" 200 -
+2024-10-09 12:28:30,645 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 12:28:31,602 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 12:28:31,603 INFO 172.18.0.1 - - [09/Oct/2024 12:28:31] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 12:28:55,817 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 12:28:56,366 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 12:28:56,367 INFO 172.18.0.1 - - [09/Oct/2024 12:28:56] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 13:55:49,035 INFO Root logger is set up and logging to both file and console.
+2024-10-09 13:55:49,039 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.18.0.5:8080
+2024-10-09 13:55:49,040 INFO [33mPress CTRL+C to quit[0m
+2024-10-09 13:56:51,263 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 13:56:53,739 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 13:56:53,740 INFO 172.18.0.1 - - [09/Oct/2024 13:56:53] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 13:58:17,050 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 13:58:30,297 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f3b4b1a9dc0 state=finished raised ConnectionError>]
+2024-10-09 13:58:30,299 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 13:58:30,301 INFO 172.18.0.1 - - [09/Oct/2024 13:58:30] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 13:58:42,078 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 13:58:55,334 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f3b4b1b9fa0 state=finished raised ConnectionError>]
+2024-10-09 13:58:55,335 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 13:58:55,336 INFO 172.18.0.1 - - [09/Oct/2024 13:58:55] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 13:59:13,437 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 13:59:26,604 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f3b4b141eb0 state=finished raised ConnectionError>]
+2024-10-09 13:59:26,605 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 13:59:26,606 INFO 172.18.0.1 - - [09/Oct/2024 13:59:26] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 13:59:31,791 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 13:59:45,008 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f3b4c1fbcd0 state=finished raised ConnectionError>]
+2024-10-09 13:59:45,009 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 13:59:45,010 INFO 172.18.0.1 - - [09/Oct/2024 13:59:45] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 13:59:46,916 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 14:00:00,127 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f3b4b1a9460 state=finished raised ConnectionError>]
+2024-10-09 14:00:00,129 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 14:00:00,130 INFO 172.18.0.1 - - [09/Oct/2024 14:00:00] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 14:02:11,471 INFO Root logger is set up and logging to both file and console.
+2024-10-09 14:02:11,474 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.18.0.5:8080
+2024-10-09 14:02:11,475 INFO [33mPress CTRL+C to quit[0m
+2024-10-09 14:02:26,416 INFO Received GET request on /api/transactions with args: ImmutableMultiDict([('address', '[bc1parzwe2xrh0wxx88qlr3lx3fve9udrrvrxrt86jcmy899q7jhgsxqjnd7f8]')])
+2024-10-09 14:02:28,645 INFO Responding with status 200 for /api/transactions
+2024-10-09 14:02:28,646 INFO 172.18.0.1 - - [09/Oct/2024 14:02:28] "GET /api/transactions?address=[bc1parzwe2xrh0wxx88qlr3lx3fve9udrrvrxrt86jcmy899q7jhgsxqjnd7f8] HTTP/1.1" 200 -
+2024-10-09 14:05:04,099 INFO Root logger is set up and logging to both file and console.
+2024-10-09 14:05:04,102 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.18.0.5:8080
+2024-10-09 14:05:04,103 INFO [33mPress CTRL+C to quit[0m
+2024-10-09 14:05:50,444 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 14:05:51,415 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 14:05:52,626 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 14:05:52,627 INFO 172.18.0.1 - - [09/Oct/2024 14:05:52] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 14:05:52,843 INFO Responding with status 200 for /api/degree-centrality
+2024-10-09 14:05:52,844 INFO 172.18.0.1 - - [09/Oct/2024 14:05:52] "GET /api/degree-centrality HTTP/1.1" 200 -
+2024-10-09 14:06:43,609 INFO Received GET request on /api/transactions with args: ImmutableMultiDict([('address', '[bc1parzwe2xrh0wxx88qlr3lx3fve9udrrvrxrt86jcmy899q7jhgsxqjnd7f8]')])
+2024-10-09 14:06:44,049 INFO Responding with status 200 for /api/transactions
+2024-10-09 14:06:44,050 INFO 172.18.0.1 - - [09/Oct/2024 14:06:44] "GET /api/transactions?address=[bc1parzwe2xrh0wxx88qlr3lx3fve9udrrvrxrt86jcmy899q7jhgsxqjnd7f8] HTTP/1.1" 200 -
+2024-10-09 14:08:38,169 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 14:08:51,406 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f62c0b533a0 state=finished raised ConnectionError>]
+2024-10-09 14:08:51,407 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 14:08:51,408 INFO 172.18.0.1 - - [09/Oct/2024 14:08:51] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 14:08:54,242 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 14:09:07,475 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f62c02f4160 state=finished raised ConnectionError>]
+2024-10-09 14:09:07,476 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 14:09:07,477 INFO 172.18.0.1 - - [09/Oct/2024 14:09:07] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 14:09:10,281 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 14:09:23,532 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f62c1398880 state=finished raised ConnectionError>]
+2024-10-09 14:09:23,534 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 14:09:23,535 INFO 172.18.0.1 - - [09/Oct/2024 14:09:23] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
+2024-10-09 14:09:27,837 INFO Received GET request on /api/degree-centrality with args: ImmutableMultiDict([])
+2024-10-09 14:09:41,102 ERROR Circuit breaker open or other error occurred: RetryError[<Future at 0x7f62c0b6a880 state=finished raised ConnectionError>]
+2024-10-09 14:09:41,103 INFO Responding with status 503 for /api/degree-centrality
+2024-10-09 14:09:41,105 INFO 172.18.0.1 - - [09/Oct/2024 14:09:41] "[35m[1mGET /api/degree-centrality HTTP/1.1[0m" 503 -
