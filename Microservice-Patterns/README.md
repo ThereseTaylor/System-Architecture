@@ -1,9 +1,11 @@
 # Microservice Architecture Overview
 
+This project was created to implement microservice patterns.
+
 ## address-service
 **Technology Stack**: Flask, Python
 
-**Description**: This service is likely a REST API built with Flask. It may handle HTTP requests for specific functionalities such as user management, data processing, or serving as a gateway to other services.
+**Description**: This service is a REST API built with Flask. It may handle HTTP requests for specific functionalities such as user management, data processing, or serving as a gateway to other services.
 
 **Overview**:
 apiVersion: apps/v1
