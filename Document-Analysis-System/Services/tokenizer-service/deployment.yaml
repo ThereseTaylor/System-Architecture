@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tokenizer
+  labels:
+    app: tokenizer
+spec:
+  selector:
+    matchLabels:
+      app: tokenizer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tokenizer
+    spec:
+      containers:
+      - name: tokenizer
+        image: similabs/consumer:v17
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tokenizer-service
+  labels:
+    app: tokenizer
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: tokenizer
+

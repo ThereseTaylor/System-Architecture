@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-feedback-deployment
+  labels:
+    app: user-feedback
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-feedback
+  template:
+    metadata:
+      labels:
+        app: user-feedback
+    spec:
+      containers:
+      - name: user-feedback-container
+        image: similabs/user-feedback:latest
+        env:
+        - name: SENDER_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: email-credentials
+              key: SENDER_EMAIL
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: email-credentials
+              key: EMAIL_PASSWORD
+      restartPolicy: Always

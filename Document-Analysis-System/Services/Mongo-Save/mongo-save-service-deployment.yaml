@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-save-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-save-service
+  template:
+    metadata:
+      labels:
+        app: mongo-save-service
+    spec:
+      containers:
+      - name: mongo-save-service
+        image: similabs/mongo_save:v3
+        ports:
+        - containerPort: 5002
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongodb-headless-svc:27017/"

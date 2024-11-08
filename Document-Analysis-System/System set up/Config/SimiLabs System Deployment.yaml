@@ -1,0 +1,862 @@
+# StorageClass for MinIO
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: minio-dynamic-storage
+provisioner: k8s.io/minikube-hostpath
+volumeBindingMode: Immediate
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+
+---
+# StorageClass for MongoDB
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: mongodb-dynamic-storage
+provisioner: k8s.io/minikube-hostpath
+volumeBindingMode: Immediate
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+
+---
+# MinIO StatefulSet and Service
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+  labels:
+    app: minio
+spec:
+  serviceName: minio-headless-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio:latest
+        args:
+          - server
+          - /data
+        env:
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: MINIO_ACCESS_KEY
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: MINIO_SECRET_KEY
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: minio-storage
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: minio-storage
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: minio-dynamic-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-headless-svc
+spec:
+  selector:
+    app: minio
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+  clusterIP: None
+
+---
+# MongoDB StatefulSet and Services
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  serviceName: mongodb-headless-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodb-storage
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-storage
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Gi
+      storageClassName: mongodb-dynamic-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-headless-svc
+spec:
+  clusterIP: None
+  selector:
+    app: mongodb
+  ports:
+    - port: 27017
+      name: mongodb
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+    spec:
+      containers:
+      - name: mongo-express
+        image: mongo-express:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: ME_CONFIG_MONGODB_SERVER
+          value: mongodb-headless-svc
+        - name: ME_CONFIG_MONGODB_PORT
+          value: "27017"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express
+spec:
+  ports:
+  - port: 8081
+    targetPort: 8081
+  selector:
+    app: mongo-express
+
+---
+# RabbitMQ ServiceAccount, ConfigMap, StatefulSet and Service
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rabbitmq
+  namespace: default
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+data:
+  enabled_plugins: |
+    [rabbitmq_federation,rabbitmq_management].
+  rabbitmq.conf: |
+    loopback_users.guest = false
+    listeners.tcp.default = 5672
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: default
+spec:
+  serviceName: rabbitmq
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      serviceAccountName: rabbitmq
+      initContainers:
+      - name: config
+        image: busybox
+        command: ['/bin/sh', '-c', 'cp /tmp/config/rabbitmq.conf /config/rabbitmq.conf && ls -l /config/ && cp /tmp/config/enabled_plugins /etc/rabbitmq/enabled_plugins']
+        volumeMounts:
+        - name: config
+          mountPath: /tmp/config/
+          readOnly: false
+        - name: config-file
+          mountPath: /config/
+        - name: plugins-file
+          mountPath: /etc/rabbitmq/
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.8-management
+        ports:
+        - containerPort: 4369
+          name: discovery
+        - containerPort: 5672
+          name: amqp
+        env:
+        - name: RABBITMQ_CONFIG_FILE
+          value: "/config/rabbitmq"
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/rabbitmq
+          readOnly: false
+        - name: config-file
+          mountPath: /config/
+        - name: plugins-file
+          mountPath: /etc/rabbitmq/
+      volumes:
+      - name: config-file
+        emptyDir: {}
+      - name: plugins-file
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: rabbitmq-config
+          defaultMode: 0755
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 500Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+spec:
+  ports:
+  - port: 4369
+    targetPort: 4369
+    name: discovery
+  - port: 5672
+    targetPort: 5672
+    name: amqp
+  selector:
+    app: rabbitmq
+
+
+---
+# Upload Deployment and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upload-deployment
+  labels:
+    app: upload
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upload
+  template:
+    metadata:
+      labels:
+        app: upload
+    spec:
+      containers:
+      - name: upload-container
+        image: similabs/upload:latest
+        env:
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: MINIO_ACCESS_KEY
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: MINIO_SECRET_KEY
+        ports:
+        - containerPort: 5001
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-service
+  labels:
+    app: upload
+spec:
+  selector:
+    app: upload
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: ClusterIP
+
+---
+# Gateway Deployment and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway-container
+        image: similabs/gateway
+        ports:
+        - containerPort: 5000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  type: NodePort
+  selector:
+    app: gateway
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30000
+
+---
+# UI Deployment and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-deployment
+  labels:
+    app: ui-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ui-deployment
+  template:
+    metadata:
+      labels:
+        app: ui-deployment
+    spec:
+      containers:
+      - name: ui-deployment
+        image: similabs/ui:latest
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-service
+spec:
+  type: NodePort
+  selector:
+    app: ui-deployment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30001
+
+---
+# Tokenizer Deployment and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tokenizer
+  labels:
+    app: tokenizer
+spec:
+  selector:
+    matchLabels:
+      app: tokenizer
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: tokenizer
+    spec:
+      containers:
+      - name: tokenizer
+        image: similabs/consumer:v24
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tokenizer-service
+  labels:
+    app: tokenizer
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: tokenizer
+
+---
+# Mongo Save Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-save
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-save
+  template:
+    metadata:
+      labels:
+        app: mongo-save
+    spec:
+      containers:
+      - name: mongo-save
+        image: similabs/mongo_save:v10
+        ports:
+        - containerPort: 5002
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongodb-headless-svc:27017/"
+
+---
+# User Feedback Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-feedback-deployment
+  labels:
+    app: user-feedback
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-feedback
+  template:
+    metadata:
+      labels:
+        app: user-feedback
+    spec:
+      containers:
+      - name: user-feedback-container
+        image: similabs/user-feedback:latest
+        env:
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: MINIO_ACCESS_KEY
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-creds
+                key: MINIO_SECRET_KEY
+
+---
+# Aggregator Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggregator
+  labels:
+    app: aggregator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aggregator
+  template:
+    metadata:
+      labels:
+        app: aggregator
+    spec:
+      containers:
+      - name: aggregator
+        image: similabs/aggregator:v22
+
+---
+# Lexical Richness Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lexical-richness-micro
+  labels:
+    app: lexical-richness
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lexical-richness
+  template:
+    metadata:
+      labels:
+        app: lexical-richness
+    spec:
+      containers:
+      - name: lexical-richness
+        image: similabs/lexical-micro:latest
+
+---
+# Polysyllabic Analysis Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polysyllabic-analysis-micro
+  labels:
+    app: polysyllabic-analysis
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: polysyllabic-analysis
+  template:
+    metadata:
+      labels:
+        app: polysyllabic-analysis
+    spec:
+      containers:
+      - name: polysyllabic-analysis
+        image: similabs/polysyllabic-micro:latest
+
+---
+# Text Cohesion Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: text-cohesion-micro
+  labels:
+    app: text-cohesion
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: text-cohesion
+  template:
+    metadata:
+      labels:
+        app: text-cohesion
+    spec:
+      containers:
+      - name: text-cohesion
+        image: similabs/text-cohesion-micro:latest
+
+---
+# Wordcount Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordcount
+  labels:
+    app: wordcount
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wordcount
+  template:
+    metadata:
+      labels:
+        app: wordcount
+    spec:
+      containers:
+      - name: wordcount
+        image: similabs/micro-test:v10
+
+---
+# Ngram Analysis Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ngram-analysis-micro
+  labels:
+    app: ngram-analysis
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ngram-analysis
+  template:
+    metadata:
+      labels:
+        app: ngram-analysis
+    spec:
+      containers:
+      - name: ngram-analysis
+        image: similabs/ngram-micro:v2
+
+---
+# Prometheus  ConfigMap, Deployment, Service, and Metrics
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      # Scrape Prometheus itself
+      - job_name: 'prometheus'
+        static_configs:
+        - targets: ['localhost:9090']
+
+      # Scrape Node Exporter for system metrics
+      - job_name: 'node-exporter'
+        kubernetes_sd_configs:
+        - role: node
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_node_name]
+          target_label: instance
+        metrics_path: /metrics
+        scheme: http
+
+      # Scrape Kube-State-Metrics for Kubernetes object metrics
+      - job_name: 'kube-state-metrics'
+        kubernetes_sd_configs:
+        - role: endpoints
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_label_app]
+          action: keep
+          regex: kube-state-metrics
+        metrics_path: /metrics
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.28.1
+        args:
+        - --config.file=/etc/prometheus/prometheus.yml
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus/
+      volumes:
+      - name: prometheus-config-volume
+        configMap:
+          name: prometheus-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+spec:
+  selector:
+    app: prometheus
+  ports:
+  - protocol: TCP
+    port: 9090
+    targetPort: 9090
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  labels:
+    app: node-exporter
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+    spec:
+      containers:
+      - name: node-exporter
+        image: prom/node-exporter:v1.1.2
+        ports:
+        - name: metrics
+          containerPort: 9100
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: rootfs
+        hostPath:
+          path: /
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+  labels:
+    app: kube-state-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        app: kube-state-metrics
+    spec:
+      containers:
+      - name: kube-state-metrics
+        image: quay.io/coreos/kube-state-metrics:v1.9.8
+        ports:
+        - containerPort: 8080
+          name: metrics
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-state-metrics-service
+spec:
+  selector:
+    app: kube-state-metrics
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+
+---
+# ConfigMap for Grafana ConfigMap, Deployment, and Services
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+data:
+  prometheus-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus-service:9090
+      isDefault: true
+      editable: true
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:latest
+        ports:
+        - containerPort: 3005
+        env:
+        - name: GF_SERVER_HTTP_PORT
+          value: "3005"
+        volumeMounts:
+        - name: grafana-storage
+          mountPath: /var/lib/grafana
+        - name: grafana-config
+          mountPath: /etc/grafana/provisioning/datasources
+      volumes:
+      - name: grafana-storage
+        emptyDir: {}
+      - name: grafana-config
+        configMap:
+          name: grafana-datasources
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+spec:
+  selector:
+    app: grafana
+  ports:
+  - protocol: TCP
+    port: 3005
+    targetPort: 3005
+    name: web
+  type: ClusterIP
